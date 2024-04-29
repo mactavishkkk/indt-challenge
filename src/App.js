@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Create from './pages/Create'
 import Edit from './pages/Edit'
 import Details from './pages/Details'
+import Charts from './pages/Charts'
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/create" element={<Create />} />
         <Route path="/edit/:id" element={<Edit />} />
         <Route path="/details/:id" element={<Details />} />
+        <Route path="/charts" element={<Charts />} />
       </Routes>
     </Router>
   );

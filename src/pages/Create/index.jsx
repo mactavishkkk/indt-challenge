@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BooleanInput from '../../components/BooleanInput';
+import Cookies from 'universal-cookie';
+import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../services/User';
 
 const Create = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [status, setStatus] = useState(false);
 
-    const [createdAt, setCreatedAt] = useState(Date.now());
-    const [updatedAt, setUpdatedAt] = useState(Date.now());
+    const navigate = useNavigate();
+    const cookies = new Cookies();
+    const token = cookies.get('token');
 
     const handleStatusChange = (newValue) => {
         setStatus(newValue);
@@ -15,6 +19,37 @@ const Create = () => {
     const handleAdminChange = (newValue) => {
         setIsAdmin(newValue);
     };
+
+    const handleSubmit = async (event) => {
+        const createdAt = new Date().toISOString();
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const userData = {
+            firstName: formData.get('Name'),
+            lastName: formData.get('lastName'),
+            email: formData.get('Email'),
+            password: formData.get('password'),
+            status: status,
+            isAdmin: isAdmin,
+            createdAt: createdAt,
+            updatedAt: createdAt,
+        };
+
+        try {
+            await registerUser(userData);
+            alert('Usuário criado com sucesso!');
+            navigate('/home');
+        } catch (error) {
+            console.error('Failed to create user:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/');
+        }
+    }, []);
 
     return (
         <div className="m-5">
@@ -27,23 +62,23 @@ const Create = () => {
             <hr />
 
             <div className="col-8">
-                <form action="Create" method="post">
+                <form onSubmit={handleSubmit}>
                     <div className="text-danger"></div>
                     <div className="form-group">
                         <label htmlFor="Name" className="control-label">Nome</label>
-                        <input type="text" id="Name" name="Name" className="form-control mb-3" placeholder='Nome' />
+                        <input type="text" id="Name" name="Name" className="form-control mb-3" placeholder='Nome' required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="lastName" className="control-label">Sobrenome</label>
-                        <input type="text" id="lastName" name="lastName" className="form-control mb-3" placeholder='Sobrenome' />
+                        <input type="text" id="lastName" name="lastName" className="form-control mb-3" placeholder='Sobrenome' required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="Email" className="control-label">Email</label>
-                        <input type="email" id="Email" name="Email" className="form-control mb-3" placeholder='exemplo@gmail.com' />
+                        <input type="email" id="Email" name="Email" className="form-control mb-3" placeholder='exemplo@gmail.com' required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="password" className="control-label">Senha</label>
-                        <input type="password" id="password" name="password" className="form-control mb-3" placeholder='******' />
+                        <input type="password" id="password" name="password" className="form-control mb-3" placeholder='A senha deve possuir no mínimo 6 caracteres' required/>
                     </div>
                     <div className="form-group">
                         <BooleanInput
@@ -59,8 +94,6 @@ const Create = () => {
                             onChange={handleAdminChange}
                         />
                     </div>
-                    <input type="hidden" name="createdAt" value={createdAt} />
-                    <input type="hidden" name="updatedAt" value={updatedAt} />
                     <div className="form-group">
                         <input type="submit" value="Criar" className="btn btn-dark" style={{ marginTop: '10px' }} />
                     </div>

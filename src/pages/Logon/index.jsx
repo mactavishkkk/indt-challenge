@@ -1,29 +1,47 @@
 import React, { useState } from 'react';
 import { Button, ButtonDiv, Container, Input, LoginForm } from './style';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../../services/User';
 
 const Logon = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
-    alert('Username:', username);
-    alert('Password:', password);
+  const handleLogin = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Por favor, insira um email válido. (...@email.com)');
+      return;
+    }
+
+    try {
+      const userData = { email, password };
+      const response = await login(userData);
+
+      if (response) {
+        alert('Login efetuado com sucesso!');
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      alert('Erro ao fazer login. Verifique suas credenciais e tente novamente.');
+    }
   };
 
   const handleRegister = () => {
-    alert('Username:', username);
-    alert('Password:', password);
+    navigate('/create');
   };
 
   return (
     <Container>
       <LoginForm>
-        <h2 style={{marginBottom: 30}}>Login</h2>
+        <h2 style={{ marginBottom: 30 }}>Login</h2>
         <Input
           type="email"
           placeholder="example@email.com"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <Input
           type="password"

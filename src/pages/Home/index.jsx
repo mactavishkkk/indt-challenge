@@ -1,21 +1,69 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Cookies from 'universal-cookie';
+import { logout, getAllUsers, deleteUser, changeStatusUser } from '../../services/User';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const users = [
-        { id: 1, firstName: 'John', lastName: 'Doe', email: 'john@example.com', status: true, isAdmin: false, createdAt: '1995-05-15', updatedAt: '1995-05-15' },
-        { id: 2, firstName: 'John', lastName: 'Doe', email: 'john@example.com', status: true, isAdmin: false, createdAt: '1995-05-15', updatedAt: '1995-05-15' },
-        { id: 3, firstName: 'John', lastName: 'Doe', email: 'john@example.com', status: true, isAdmin: false, createdAt: '1995-05-15', updatedAt: '1995-05-15' },
-    ];
+    const [users, setUsers] = useState([]);
+
+    const navigate = useNavigate();
+    const cookies = new Cookies();
+    const token = cookies.get('token');
+
+    const handleLogout = () => {
+        logout();
+        alert('Até mais!');
+        navigate('/');
+    };
+
+    const handleDelete = (userId) => {
+        if (window.confirm('Tem certeza que deseja excluir este usuário?')) {
+            deleteUser(userId)
+                .then(() => {
+                    window.location.reload();
+                })
+                .catch(error => console.error('Erro ao excluir usuário:', error));
+        }
+    };
+
+    const handleChangeStatus = (userId) => {
+        if (window.confirm('Tem certeza que deseja mudar o status este usuário?')) {
+            changeStatusUser(userId)
+                .then(() => {
+                    window.location.reload();
+                })
+                .catch(error => console.error('Erro ao mudar o status do usuário:', error));
+        }
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/');
+        } else {
+            getAllUsers().then(response => response)
+                .then(data => setUsers(data))
+                .catch(error => console.error('Erro ao obter usuários:', error));
+        }
+    }, [token]);
 
     return (
-        <div class="m-5">
+        <div className="m-5">
             <h1>Home</h1>
             <p>
-                <a class="btn btn-secondary" href={`/create`}>Criar novo usuário</a>
+                <a className="btn btn-secondary" href={`/create`}>Criar novo usuário</a>
+                <a className="btn btn-warning m-2" href={`/charts`}>Gráficos</a>
             </p>
-            <table class="table table-striped table-hover">
+            <table className="table table-striped table-hover">
                 <thead>
-                    <tr class="bg-gradient">
+                    <tr className="bg-gradient">
                         <th>
                             Código
                         </th>
@@ -26,7 +74,7 @@ const Home = () => {
                             Email
                         </th>
                         <th>
-                            Ativo
+                            Status
                         </th>
                         <th>
                             Admin
@@ -37,24 +85,30 @@ const Home = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user) => (
+                    {users.sort((a, b) => a.id - b.id).map((user) => (
                         <tr key={user.id}>
                             <td>{user.id}</td>
                             <td>{user.firstName} {user.lastName}</td>
                             <td>{user.email}</td>
                             <td>{user.status ? 'Ativo' : 'Desativo'}</td>
                             <td>{user.isAdmin ? 'Administrador' : 'Comum'}</td>
-                            <td>{user.createdAt}</td>
+                            <td>{formatDate(user.createdAt)}</td>
                             <td>
                                 <a href={`/edit/${user.id}`} className="btn btn-primary me-1">Editar</a>
                                 <a href={`/details/${user.id}`} className="btn btn-info me-1">Sobre</a>
-                                <a href={`/delete/${user.id}`} className="btn btn-danger me-1">Deletar</a>
-                                <a href={`/delete/${user.id}`} className="btn btn-danger">Desativar</a>
+                                <button onClick={() => handleDelete(user.id)} className="btn btn-danger me-1">Deletar</button>
+                                {user.status ? (
+                                    <button onClick={() => handleChangeStatus(user.id)} className="btn btn-danger me-1">Desativar</button>
+                                ) : (
+                                    <button onClick={() => handleChangeStatus(user.id)} className="btn btn-success me-1">Ativar</button>
+                                )}
                             </td>
                         </tr>
                     ))}
+
                 </tbody>
             </table>
+            <button onClick={handleLogout} className="btn btn-danger">Logout</button>
         </div>
     );
 };

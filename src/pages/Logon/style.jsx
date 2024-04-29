@@ -4,11 +4,12 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  height: 100vh;
+  background-color: #191F28;
 `;
 
 export const LoginForm = styled.div`
-  background-color: #CAF0F8;
+  background-color: #fff;
   padding: 30px;
   border-radius: 3px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -30,7 +31,7 @@ export const ButtonDiv = styled.div`
 export const Button = styled.button`
   width: 100%;
   padding: 10px;
-  background-color: #023E8A;
+  background-color: #2C313B;
   color: #fff;
   border: none;
   border-radius: 3px;
