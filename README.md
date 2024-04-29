@@ -10,6 +10,10 @@ Certifique-se de ter o Docker e o Docker Compose instalados em sua máquina.
 - Docker Compose: [Instalação do Docker Compose](https://docs.docker.com/compose/install/)
 - Ferramenta de versionamento: [Instalação do Git](https://git-scm.com/)
 
+### OBS:
+
+Além dos requisitos acima, você precisará da **API** para este aplicativo rodando em sua estação. Você poderá encontrar isto facilmente aqui: [indt-challeng-api](https://github.com/mactavishkkk/indt-challenge-api).
+
 ## Como executar
 
 1. Clone o repositório:
@@ -39,7 +43,7 @@ docker compose up -d
 5. Pronto, agora você já poderá acessar a rota de boas vindas em seu navegador:
 
 ```bash
-https://localhost:3000/
+https://localhost:3001/
 ```
 
 ---
