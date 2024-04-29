@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import BooleanInput from '../../components/BooleanInput';
-import Cookies from 'universal-cookie';
 import { useNavigate } from 'react-router-dom';
-import { createUser, registerUser } from '../../services/User';
+import { register } from '../../services/User';
 
-const Create = () => {
+const Register = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [status, setStatus] = useState(false);
 
     const navigate = useNavigate();
-    const cookies = new Cookies();
-    const token = cookies.get('token');
 
     const handleStatusChange = (newValue) => {
         setStatus(newValue);
@@ -37,19 +34,13 @@ const Create = () => {
         };
 
         try {
-            await createUser(userData);
+            await register(userData);
             alert('Usuário criado com sucesso!');
-            navigate('/home');
+            navigate('/');
         } catch (error) {
             console.error('Failed to create user:', error);
         }
     };
-
-    useEffect(() => {
-        if (!token) {
-            navigate('/');
-        }
-    }, []);
 
     return (
         <div className="m-5">
@@ -103,4 +94,4 @@ const Create = () => {
     );
 };
 
-export default Create;
+export default Register;

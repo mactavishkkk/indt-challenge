@@ -38,6 +38,29 @@ export const logout = async () => {
     }
 };
 
+export const register = async (userData) => {
+    try {
+        const response = await fetch(`${URL_API}/api/Auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(userData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to register user');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error registering user:', error);
+        throw error;
+    }
+};
+
 export const getAllUsers = async () => {
     try {
         const token = cookies.get('token');
@@ -91,7 +114,7 @@ export const getUserById = async (id) => {
     }
 };
 
-export const registerUser = async (userData) => {
+export const createUser = async (userData) => {
     try {
         const token = cookies.get('token');
 

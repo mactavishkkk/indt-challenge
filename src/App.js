@@ -7,12 +7,14 @@ import Create from './pages/Create'
 import Edit from './pages/Edit'
 import Details from './pages/Details'
 import Charts from './pages/Charts'
+import Register from './pages/Register'
 
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route exact path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route exact path="/home" element={<Home />} />
         <Route path="/create" element={<Create />} />
         <Route path="/edit/:id" element={<Edit />} />
